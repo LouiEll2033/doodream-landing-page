@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>두드림AI | 내 꿈을 현실로, AI 전문가로 가는 길</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a23d15",
+                        "secondary": "#1E4D2B",
+                        "accent": "#FA925C",
+                        "soft-bg": "#F2EBD3",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211611",
+                    },
+                    fontFamily: { "display": ["Lexend", "sans-serif"] },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", "lg": "0.5rem",
+                        "xl": "0.75rem", "full": "9999px"
+                    },
+                    screens: {
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        #currPanel {
+            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        #currOverlay {
+            transition: opacity 0.3s ease;
+        }
+
+        /* 신청 폼 모달 */
+        #applyPanel {
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        #applyOverlay {
+            transition: opacity 0.3s ease;
+        }
+
+        /* 입력 필드 포커스 */
+        .form-input:focus {
+            outline: none;
+            border-color: #a23d15;
+            box-shadow: 0 0 0 3px rgba(162, 61, 21, 0.12);
+        }
+
+        /* 제출 버튼 로딩 스피너 */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+
+        .spring-badge {
+            background: linear-gradient(135deg, #FA925C, #a23d15);
+        }
+
+        .stage-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* =============================================
+           반응형 히어로: 태블릿 이상에서 좌우 분할
+           ============================================= */
+        @media (min-width: 768px) {
+            .hero-inner {
+                flex-direction: row !important;
+                align-items: center;
+                gap: 3rem;
+            }
+
+            .hero-image-wrap {
+                flex-shrink: 0;
+            }
+
+            .hero-text {
+                text-align: left !important;
+                padding: 0 !important;
+            }
+
+            .hero-text h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero-cta {
+                width: auto !important;
+                display: inline-flex !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .hero-text h2 {
+                font-size: 3rem;
+            }
+
+            .hero-image-box {
+                width: 20rem !important;
+                height: 20rem !important;
+            }
+        }
+
+        /* 모달: 태블릿 이상에서 중앙 팝업 형태 */
+        @media (min-width: 768px) {
+            #currModal {
+                align-items: center !important;
+            }
+
+            #currPanel {
+                border-radius: 1.5rem !important;
+                max-height: 85dvh !important;
+            }
+        }
+
+        /* 통계 섹션 데스크탑 */
+        @media (min-width: 1024px) {
+            .stat-item p.text-lg {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 채팅 버튼 위치 조정 */
+        @media (min-width: 1024px) {
+            .chat-fab {
+                bottom: 2.5rem !important;
+                right: 2.5rem !important;
+            }
+        }
+
+        /* 부드러운 호버 효과 */
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #a23d15;
+            transition: width 0.2s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+
+    <!-- 헤더 -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 md:px-8 lg:px-16 xl:px-24 py-3 border-b border-primary/10">
+        <div class="flex items-center gap-2">
+            <div class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-xl">psychology</span>
+            </div>
+            <h1 class="text-xl font-extrabold tracking-tight text-primary">두드림AI</h1>
+        </div>
+
+        <!-- 데스크탑 네비게이션 -->
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="#features"
+                class="nav-link text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">왜
+                두드림AI?</a>
+            <a href="#curriculum"
+                class="nav-link text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">커리큘럼</a>
+            <a href="#subscribe"
+                class="nav-link text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">뉴스레터</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+            <button
+                class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">로그인</button>
+            <button
+                class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-bold shadow-md transition-all hover:shadow-lg hover:scale-105 active:scale-95">
+                Sign up
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full overflow-x-hidden">
+
+        <!-- 히어로 섹션 -->
+        <section class="px-4 md:px-8 lg:px-16 xl:px-24 pt-10 pb-12 md:pt-16 md:pb-20 max-w-7xl mx-auto">
+            <div class="flex flex-col hero-inner gap-8">
+                <!-- 이미지 -->
+                <div class="relative mx-auto hero-image-wrap">
+                    <div
+                        class="hero-image-box w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800 rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <img alt="두드림AI 대표 손영란" class="w-full h-full object-cover object-top"
+                            src="./images/representative.jpg"
+                            onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuDbglLqpaI6l1N6D_KFbhgC8mlo7ektxa68vmFZ3tsZTx-PMTAUyggRIZ3UOGr4_rz7ZOp2TmKTMMCZE4WtQILHC76gsH5_BHgOBQG-GR7cTj593j4-PhNSxKce_BHLKACv10EgXe6f3vaBBLOga5LAJK5RMVhHbCrTO07tZHvqeRdwLv01PypvwSQ_xcrGc7bb2yiCQ9qwCjkC2CesvIbXbmSas3OPsjf52Xs-bNqyrAQkKZDIeRHixBSk7_y8Uxhl5I4j2uYta0Zi'" />
+                    </div>
+                    <div
+                        class="absolute -bottom-4 -right-2 bg-secondary text-white px-4 py-2 rounded-xl shadow-lg -rotate-3">
+                        <p class="text-[10px] font-bold opacity-80 uppercase tracking-wider mb-0.5">CEO &amp; Founder
+                        </p>
+                        <p class="text-lg font-black leading-none">손영란 대표</p>
+                    </div>
+                </div>
+
+                <!-- 텍스트 -->
+                <div class="text-center px-2 hero-text">
+                    <span class="text-primary font-bold text-sm tracking-widest uppercase mb-3 block">실무 중심 AI 교육의
+                        선두주자</span>
+                    <h2 class="text-slate-900 dark:text-white text-3xl font-black leading-tight mb-4">
+                        내 꿈을 현실로,<br />AI 전문가로 가는 길
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-base leading-relaxed mb-8 max-w-lg">
+                        두드림AI와 함께 미래를 선도하는 AI 전문가로 거듭나세요. 기초부터 실전 비즈니스 적용까지 모든 과정을 지원합니다.
+                    </p>
+                    <button onclick="openCurrModal()" id="hero-cta"
+                        class="hero-cta w-full bg-primary text-white py-4 px-8 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-xl transition-all active:scale-95">
+                        지금 바로 시작하기
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 통계 섹션 -->
+        <section id="stats" class="bg-secondary text-white py-5 px-6 md:px-16 lg:px-24">
+            <div class="max-w-7xl mx-auto flex justify-around items-center">
+                <div class="text-center">
+                    <p class="text-[10px] md:text-xs opacity-70 uppercase font-bold tracking-tighter mb-1">수강생 수</p>
+                    <p class="text-lg md:text-2xl lg:text-3xl font-bold">12,400+</p>
+                </div>
+                <div class="h-10 w-px bg-white/20"></div>
+                <div class="text-center">
+                    <p class="text-[10px] md:text-xs opacity-70 uppercase font-bold tracking-tighter mb-1">만족도</p>
+                    <p class="text-lg md:text-2xl lg:text-3xl font-bold">4.9/5.0</p>
+                </div>
+                <div class="h-10 w-px bg-white/20"></div>
+                <div class="text-center">
+                    <p class="text-[10px] md:text-xs opacity-70 uppercase font-bold tracking-tighter mb-1">취업/창업률</p>
+                    <p class="text-lg md:text-2xl lg:text-3xl font-bold">89%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 특징 섹션 -->
+        <section id="features" class="px-4 md:px-8 lg:px-16 xl:px-24 py-14 bg-white dark:bg-background-dark/50">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-10">
+                    <h3 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">왜 두드림AI인가요?</h3>
+                    <div class="h-1 w-12 bg-primary rounded-full"></div>
+                </div>
+                <!-- 모바일: 2열 / 태블릿: 2열 / 데스크탑: 4열 -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div
+                        class="p-5 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <span
+                            class="material-symbols-outlined text-primary text-3xl md:text-4xl mb-3 block">verified_user</span>
+                        <h4 class="font-bold text-sm md:text-base mb-1">검증된 커리큘럼</h4>
+                        <p class="text-xs md:text-sm text-slate-500">실무 중심의 체계적인 학습 로드맵</p>
+                    </div>
+                    <div
+                        class="p-5 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <span
+                            class="material-symbols-outlined text-secondary text-3xl md:text-4xl mb-3 block">groups</span>
+                        <h4 class="font-bold text-sm md:text-base mb-1">1:1 밀착 코칭</h4>
+                        <p class="text-xs md:text-sm text-slate-500">전문가의 개별 피드백과 멘토링</p>
+                    </div>
+                    <div
+                        class="p-5 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <span
+                            class="material-symbols-outlined text-accent text-3xl md:text-4xl mb-3 block">rocket_launch</span>
+                        <h4 class="font-bold text-sm md:text-base mb-1">수익화 전략</h4>
+                        <p class="text-xs md:text-sm text-slate-500">AI를 활용한 비즈니스 모델 구축</p>
+                    </div>
+                    <div
+                        class="p-5 md:p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                        <span
+                            class="material-symbols-outlined text-slate-700 text-3xl md:text-4xl mb-3 block">forum</span>
+                        <h4 class="font-bold text-sm md:text-base mb-1">강력한 커뮤니티</h4>
+                        <p class="text-xs md:text-sm text-slate-500">함께 성장하는 동료들과의 네트워킹</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 커리큘럼 섹션 (랜딩 3단계 카드) -->
+        <section id="curriculum" class="bg-soft-bg dark:bg-secondary/10 px-4 md:px-8 lg:px-16 xl:px-24 py-14">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">커리큘럼 안내</h3>
+                        <p class="text-xs md:text-sm text-[#a23d15] font-bold">🔷 두드림AI 3단계 브랜드형 설계</p>
+                    </div>
+                    <button onclick="openCurrModal()"
+                        class="text-primary text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                        전체보기 <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    </button>
+                </div>
+
+                <!-- 모바일: 1열 / 태블릿 이상: 3열 -->
+                <div class="flex flex-col md:grid md:grid-cols-3 gap-4 md:gap-6">
+
+                    <!-- 1단계 카드 -->
+                    <div onclick="openCurrModal()"
+                        class="cursor-pointer bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border-2 border-[#1E4D2B]/20 hover:border-[#1E4D2B] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <div class="bg-[#1E4D2B] px-5 py-4 flex items-center justify-between">
+                            <div>
+                                <span class="stage-pill bg-white/20 text-white mb-2 block w-fit">1단계 · 입문</span>
+                                <p class="text-white font-black text-base leading-snug">AI와 나를 다시<br />만나는 4주</p>
+                            </div>
+                            <span class="text-4xl">🌱</span>
+                        </div>
+                        <div class="px-5 py-4">
+                            <p class="text-xs text-slate-400 italic mb-3">삶은 콘텐츠가 된다</p>
+                            <div class="flex flex-wrap gap-1.5 mb-3">
+                                <span
+                                    class="text-[10px] bg-[#F2EBD3] text-[#a23d15] font-bold px-2.5 py-1 rounded-full">AI
+                                    두려움 제거</span>
+                                <span
+                                    class="text-[10px] bg-[#F2EBD3] text-[#a23d15] font-bold px-2.5 py-1 rounded-full">인생
+                                    키워드 발견</span>
+                                <span
+                                    class="text-[10px] bg-[#F2EBD3] text-[#a23d15] font-bold px-2.5 py-1 rounded-full">첫
+                                    블로그 발행</span>
+                            </div>
+                            <!-- 봄 기록 모임 배지 -->
+                            <div
+                                class="flex items-center gap-2 bg-[#FFF5EE] border border-[#FA925C]/30 rounded-xl px-3 py-2">
+                                <span class="text-base">🌸</span>
+                                <div>
+                                    <p class="text-[10px] text-[#a23d15] font-bold">현재 모집중</p>
+                                    <p class="text-xs text-slate-700 font-semibold">봄 기록 모임 1기 · 5명 한정</p>
+                                </div>
+                                <span class="ml-auto text-[#a23d15]"><span
+                                        class="material-symbols-outlined text-base">chevron_right</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2단계 카드 -->
+                    <div
+                        class="opacity-70 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 cursor-not-allowed">
+                        <div class="bg-[#a23d15] px-5 py-4 flex items-center justify-between">
+                            <div>
+                                <span class="stage-pill bg-white/20 text-white mb-2 block w-fit">2단계</span>
+                                <p class="text-white font-black text-base leading-snug">치유 중심 콘텐츠<br />발행 과정 (8주)</p>
+                            </div>
+                            <span class="text-4xl">✍️</span>
+                        </div>
+                        <div class="px-5 py-4">
+                            <p class="text-xs text-slate-400 italic mb-3">내 삶이 누군가의 등불이 되다</p>
+                            <div class="flex flex-wrap gap-1.5 mb-3">
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">블로그
+                                    10편</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">치유
+                                    에세이 전자책</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">개인
+                                    브랜딩</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-bold">🔒 1단계 수료 후 개설 예정</p>
+                        </div>
+                    </div>
+
+                    <!-- 3단계 카드 -->
+                    <div
+                        class="opacity-60 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 cursor-not-allowed">
+                        <div class="px-5 py-4 flex items-center justify-between"
+                            style="background:linear-gradient(135deg,#1E4D2B,#a23d15);">
+                            <div>
+                                <span class="stage-pill bg-white/20 text-white mb-2 block w-fit">3단계</span>
+                                <p class="text-white font-black text-base leading-snug">수익형 콘텐츠<br />발행 과정</p>
+                            </div>
+                            <span class="text-4xl">💎</span>
+                        </div>
+                        <div class="px-5 py-4">
+                            <p class="text-xs text-slate-400 italic mb-3">지혜를 자산으로 바꾸다</p>
+                            <div class="flex flex-wrap gap-1.5 mb-3">
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">SNS
+                                    채널 운영</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">전자책
+                                    판매</span>
+                                <span
+                                    class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-full">수익
+                                    구조화</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-bold">🔒 2단계 수료 후 개설 예정</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 이메일 구독 섹션 -->
+        <section id="subscribe"
+            class="px-4 md:px-8 lg:px-16 xl:px-24 py-14 text-center bg-white dark:bg-background-dark">
+            <div class="max-w-2xl mx-auto">
+                <h3 class="text-xl md:text-2xl lg:text-3xl font-bold mb-4 italic">"AI는 도구일 뿐입니다. 그 도구를 다루는 주인이 되세요."
+                </h3>
+                <p class="text-slate-500 text-sm md:text-base mb-8">매주 발행되는 AI 트렌드 리포트를 무료로 받아보세요.</p>
+                <div class="flex gap-2 max-w-md mx-auto md:max-w-full">
+                    <input
+                        class="flex-1 border border-slate-200 dark:border-slate-800 dark:bg-slate-900 rounded-lg text-sm px-4 py-3 focus:ring-primary focus:border-primary outline-none"
+                        placeholder="이메일 주소 입력" type="email" />
+                    <button
+                        class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-bold text-sm transition-colors whitespace-nowrap">구독</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 푸터 -->
+        <footer class="bg-slate-900 text-slate-400 px-4 md:px-8 lg:px-16 xl:px-24 pt-12 pb-12 text-xs leading-loose">
+            <div class="max-w-7xl mx-auto">
+                <!-- 푸터 상단: 로고 + 링크 -->
+                <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-8 mb-10">
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="bg-primary text-white p-1 rounded flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm">psychology</span>
+                            </div>
+                            <span class="text-white font-bold text-sm">두드림AI</span>
+                        </div>
+                        <p>사업자등록번호: 123-45-67890 | 대표: 손영란</p>
+                        <p>주소: 서울특별시 강남구 테헤란로 AI 타워 12층</p>
+                        <p>이메일: support@dodreamai.com</p>
+                    </div>
+                    <!-- 데스크탑 링크 -->
+                    <div class="flex flex-col gap-2 text-slate-400 md:items-end">
+                        <a href="#" class="hover:text-white transition-colors">이용약관</a>
+                        <a class="font-bold text-white hover:text-accent transition-colors" href="#">개인정보처리방침</a>
+                        <a href="#" class="hover:text-white transition-colors">고객센터</a>
+                    </div>
+                </div>
+                <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row md:justify-between gap-2">
+                    <p class="opacity-50">© 2024 두드림AI. All rights reserved.</p>
+                    <!-- 모바일용 링크 (md 이상에서는 숨김) -->
+                    <div class="flex gap-4 text-slate-300 md:hidden">
+                        <a href="#">이용약관</a>
+                        <a class="font-bold text-white" href="#">개인정보처리방침</a>
+                        <a href="#">고객센터</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- 채팅 플로팅 버튼 -->
+    <div class="chat-fab fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        <div
+            class="bg-white dark:bg-slate-900 shadow-xl border border-slate-100 dark:border-slate-800 rounded-2xl px-4 py-2 text-[10px] font-bold text-slate-600 dark:text-slate-300 animate-bounce">
+            무엇이든 물어보세요! 👋
+        </div>
+        <button
+            class="size-14 bg-accent text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-105 transition-transform active:scale-95">
+            <span class="material-symbols-outlined text-3xl">chat</span>
+        </button>
+    </div>
+
+
+    <!-- ===== 커리큘럼 전체 슬라이드업 모달 ===== -->
+    <div id="currModal" class="fixed inset-0 z-[100] flex items-end justify-center pointer-events-none">
+        <div id="currOverlay" onclick="closeCurrModal()"
+            class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0"></div>
+
+        <div id="currPanel"
+            class="relative w-full max-w-lg bg-[#fdf8f3] rounded-t-3xl shadow-2xl overflow-y-auto max-h-[92dvh] translate-y-full">
+
+            <!-- 스티키 헤더 -->
+            <div
+                class="sticky top-0 z-10 bg-[#fdf8f3]/97 backdrop-blur-md pt-5 pb-3 px-5 flex items-center justify-between border-b border-[#e8dcc8]">
+                <div class="w-10 h-1 bg-[#c9b99a] rounded-full absolute left-1/2 -translate-x-1/2 top-2"></div>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="text-base">🔷</span>
+                    <span class="font-black text-[#1E4D2B] text-sm">두드림AI 3단계 브랜드형 설계</span>
+                </div>
+                <button onclick="closeCurrModal()"
+                    class="mt-1 w-8 h-8 flex items-center justify-center rounded-full bg-[#e8dcc8] text-[#a23d15] hover:bg-[#a23d15] hover:text-white transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="px-5 pb-16 pt-5 space-y-8">
+
+                <!-- 로드맵 시각화 -->
+                <div
+                    class="flex items-center justify-between bg-white rounded-2xl px-4 py-3 shadow-sm border border-[#e8dcc8]">
+                    <div class="text-center">
+                        <div class="w-10 h-10 bg-[#1E4D2B] rounded-full flex items-center justify-center mx-auto mb-1">
+                            <span class="text-white text-xs font-black">1단계</span>
+                        </div>
+                        <p class="text-[9px] text-[#1E4D2B] font-bold">입문</p>
+                    </div>
+                    <div class="flex-1 h-0.5 bg-gradient-to-r from-[#1E4D2B] to-[#a23d15] mx-2 relative">
+                        <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[8px] text-slate-400">→</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-10 h-10 bg-[#a23d15] rounded-full flex items-center justify-center mx-auto mb-1">
+                            <span class="text-white text-xs font-black">2단계</span>
+                        </div>
+                        <p class="text-[9px] text-[#a23d15] font-bold">발행</p>
+                    </div>
+                    <div class="flex-1 h-0.5 bg-gradient-to-r from-[#a23d15] to-[#FA925C] mx-2 relative">
+                        <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[8px] text-slate-400">→</span>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-1"
+                            style="background:linear-gradient(135deg,#1E4D2B,#a23d15);">
+                            <span class="text-white text-xs font-black">3단계</span>
+                        </div>
+                        <p class="text-[9px] text-[#FA925C] font-bold">수익화</p>
+                    </div>
+                </div>
+
+                <!-- ======= 1단계 ======= -->
+                <div class="space-y-4">
+                    <!-- 1단계 헤더 -->
+                    <div class="bg-[#1E4D2B] rounded-2xl overflow-hidden">
+                        <div class="px-5 py-5">
+                            <span class="stage-pill bg-white/20 text-white mb-3 inline-flex">1단계 · 입문 · 4주</span>
+                            <h2 class="text-white text-xl font-black leading-snug mb-1">AI와 나를 다시 만나는 4주</h2>
+                            <p class="text-[#FA925C] text-sm italic">삶은 콘텐츠가 된다</p>
+                        </div>
+                    </div>
+
+                    <!-- 목표 + 결과물 -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white rounded-2xl p-4 border border-[#e8dcc8]">
+                            <p class="text-[#1E4D2B] font-black text-xs mb-3">🎯 목표</p>
+                            <ul class="space-y-1.5 text-xs text-slate-600">
+                                <li class="flex gap-1.5"><span class="text-[#1E4D2B] shrink-0">·</span>AI 두려움 제거</li>
+                                <li class="flex gap-1.5"><span class="text-[#1E4D2B] shrink-0">·</span>인생 키워드 찾기</li>
+                                <li class="flex gap-1.5"><span class="text-[#1E4D2B] shrink-0">·</span>말로 풀어내는 연습</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-2xl p-4 border border-[#e8dcc8]">
+                            <p class="text-[#a23d15] font-black text-xs mb-3">💎 결과물</p>
+                            <ul class="space-y-1.5 text-xs text-slate-600">
+                                <li class="flex gap-1.5"><span class="text-[#a23d15] shrink-0">·</span>인생 연표 정리</li>
+                                <li class="flex gap-1.5"><span class="text-[#a23d15] shrink-0">·</span>키워드 5개</li>
+                                <li class="flex gap-1.5"><span class="text-[#a23d15] shrink-0">·</span>자기소개 글 1편</li>
+                                <li class="flex gap-1.5"><span class="text-[#a23d15] shrink-0">·</span>블로그 첫 글 발행</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#F2EBD3] rounded-xl px-4 py-3 border-l-4 border-[#1E4D2B]">
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            👉 목표는 "기술 습득"이 아니라<br />
+                            <strong class="text-[#1E4D2B]">"나는 아직 말할 이야기가 있다"를 느끼게 하는 것</strong>
+                        </p>
+                    </div>
+
+                    <!-- ──── 봄 기록 모임 1기 (1단계 내 프로그램) ──── -->
+                    <div class="border-2 border-[#FA925C]/40 rounded-2xl overflow-hidden">
+                        <!-- 봄 모임 타이틀 -->
+                        <div class="px-5 py-4 text-center"
+                            style="background:linear-gradient(135deg,#FA925C22,#a23d1511);">
+                            <p class="text-[#a23d15] text-[10px] font-bold tracking-widest uppercase mb-1">🌸 1단계 현재 개설
+                                과정</p>
+                            <h3 class="text-[#1E4D2B] text-lg font-black leading-snug">봄 기록 모임 1기</h3>
+                            <p class="text-[#a23d15] text-sm italic font-medium">《삶은 콘텐츠가 된다》</p>
+                        </div>
+
+                        <div class="bg-white px-5 pb-5 pt-4 space-y-5">
+
+                            <!-- 초대 대상 -->
+                            <div>
+                                <p class="text-[#1E4D2B] font-black text-xs mb-3">🌙 이런 분을 초대합니다</p>
+                                <ul class="space-y-2 text-sm text-slate-700">
+                                    <li class="flex gap-2"><span class="text-[#a23d15] shrink-0">✦</span>이제는 내 삶을 정리하고
+                                        싶은 분</li>
+                                    <li class="flex gap-2"><span class="text-[#a23d15] shrink-0">✦</span>지나온 시간을 의미 있게
+                                        남기고 싶은 분</li>
+                                    <li class="flex gap-2"><span class="text-[#a23d15] shrink-0">✦</span>글을 써보고 싶었지만
+                                        시작하지 못했던 분</li>
+                                    <li class="flex gap-2"><span class="text-[#a23d15] shrink-0">✦</span>AI가 어렵지만, 나를
+                                        기록해보고 싶은 분</li>
+                                    <li class="flex gap-2"><span class="text-[#a23d15] shrink-0">✦</span>조용하고 깊은 모임을 찾고
+                                        있는 분</li>
+                                </ul>
+                                <p class="mt-3 text-xs text-slate-500 leading-relaxed">이 모임은 기술을 배우는 시간이
+                                    아닙니다.<br /><strong class="text-[#1E4D2B]">삶을 기록하는 시간입니다.</strong></p>
+                            </div>
+
+                            <!-- 과정 개요 -->
+                            <div class="bg-[#1E4D2B] rounded-xl p-4">
+                                <p class="text-[#F2EBD3] font-black text-xs mb-3">🌿 과정 개요</p>
+                                <div class="grid grid-cols-2 gap-2 mb-3">
+                                    <div class="bg-white/10 rounded-lg p-2.5">
+                                        <p class="text-[#FA925C] text-[9px] font-bold uppercase mb-0.5">기간</p>
+                                        <p class="text-white text-xs font-semibold">4주 (3월–4월)</p>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-2.5">
+                                        <p class="text-[#FA925C] text-[9px] font-bold uppercase mb-0.5">일정</p>
+                                        <p class="text-white text-xs font-semibold">매주 화요일 오후 7–9시</p>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-2.5">
+                                        <p class="text-[#FA925C] text-[9px] font-bold uppercase mb-0.5">정원</p>
+                                        <p class="text-white text-xs font-semibold">5명 한정</p>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-2.5">
+                                        <p class="text-[#FA925C] text-[9px] font-bold uppercase mb-0.5">장소</p>
+                                        <p class="text-white text-xs font-semibold">두드림AI 기록실</p>
+                                    </div>
+                                </div>
+                                <div class="bg-[#FA925C] rounded-lg p-3 text-center">
+                                    <p class="text-white/80 text-[9px] font-bold uppercase mb-0.5">수강료</p>
+                                    <p class="text-white text-xl font-black">₩390,000</p>
+                                </div>
+                            </div>
+
+                            <!-- 4주 커리큘럼 -->
+                            <div>
+                                <p class="text-[#1E4D2B] font-black text-xs mb-3">🌱 4주 커리큘럼</p>
+                                <div class="space-y-3">
+                                    <div class="rounded-xl overflow-hidden border border-[#e8dcc8]">
+                                        <div class="bg-[#1E4D2B] px-4 py-2.5 flex items-center gap-2">
+                                            <span>🌿</span>
+                                            <div>
+                                                <p class="text-[#FA925C] text-[9px] font-bold uppercase">Week 1</p>
+                                                <p class="text-white font-bold text-xs">나는 어떤 시간을 살아왔는가</p>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#fafaf8] px-4 py-3 space-y-1">
+                                            <p class="text-xs text-slate-600">· 인생 전환점 3가지 정리</p>
+                                            <p class="text-xs text-slate-600">· 반복된 감정 키워드 발견</p>
+                                            <p class="text-xs text-slate-600">· AI와 함께 삶을 에세이로 정리</p>
+                                            <p class="text-xs text-slate-600">· 첫 기록 작성</p>
+                                            <p
+                                                class="mt-2 text-[10px] text-[#1E4D2B] font-bold italic bg-[#F2EBD3] rounded-lg px-3 py-1.5">
+                                                "내 삶은 그냥 지나간 시간이 아니었다."</p>
+                                        </div>
+                                    </div>
+                                    <div class="rounded-xl overflow-hidden border border-[#e8dcc8]">
+                                        <div class="bg-[#a23d15] px-4 py-2.5 flex items-center gap-2">
+                                            <span>🌷</span>
+                                            <div>
+                                                <p class="text-[#F2EBD3] text-[9px] font-bold uppercase">Week 2</p>
+                                                <p class="text-white font-bold text-xs">나의 감정에 이름을 붙이다</p>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#fafaf8] px-4 py-3 space-y-1">
+                                            <p class="text-xs text-slate-600">· 오래 품어온 감정 돌아보기</p>
+                                            <p class="text-xs text-slate-600">· 상처를 이야기로 재해석하기</p>
+                                            <p class="text-xs text-slate-600">· 감성 에세이 초안 완성</p>
+                                            <p class="text-xs text-slate-600">· 블로그 첫 글 발행</p>
+                                            <p
+                                                class="mt-2 text-[10px] text-[#a23d15] font-bold italic bg-[#F2EBD3] rounded-lg px-3 py-1.5">
+                                                "나는 이제 나의 감정을 인정한다."</p>
+                                        </div>
+                                    </div>
+                                    <div class="rounded-xl overflow-hidden border border-[#e8dcc8]">
+                                        <div class="bg-[#FA925C] px-4 py-2.5 flex items-center gap-2">
+                                            <span>🌸</span>
+                                            <div>
+                                                <p class="text-white/80 text-[9px] font-bold uppercase">Week 3</p>
+                                                <p class="text-white font-bold text-xs">나의 메시지가 피어나다</p>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#fafaf8] px-4 py-3 space-y-1">
+                                            <p class="text-xs text-slate-600">· 인생 키워드 5개 정리</p>
+                                            <p class="text-xs text-slate-600">· 브랜드 한 문장 만들기</p>
+                                            <p class="text-xs text-slate-600">· 블로그 2편 발행</p>
+                                            <p class="text-xs text-slate-600">· 서로의 글 낭독</p>
+                                            <p
+                                                class="mt-2 text-[10px] text-[#a23d15] font-bold italic bg-[#F2EBD3] rounded-lg px-3 py-1.5">
+                                                "나는 무엇을 말하고 싶은 사람인가."</p>
+                                        </div>
+                                    </div>
+                                    <div class="rounded-xl overflow-hidden border border-[#e8dcc8]">
+                                        <div class="px-4 py-2.5 flex items-center gap-2"
+                                            style="background:linear-gradient(135deg,#1E4D2B,#a23d15);">
+                                            <span>🌼</span>
+                                            <div>
+                                                <p class="text-[#F2EBD3] text-[9px] font-bold uppercase">Week 4</p>
+                                                <p class="text-white font-bold text-xs">나는 어떤 어른으로 남을 것인가</p>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#fafaf8] px-4 py-3 space-y-1">
+                                            <p class="text-xs text-slate-600">· 블로그 3편 이상 완성</p>
+                                            <p class="text-xs text-slate-600">· 인스타 계정 개설 (선택)</p>
+                                            <p class="text-xs text-slate-600">· 나의 기록 선언문 작성</p>
+                                            <p class="text-xs text-slate-600">· 수료 낭독 시간</p>
+                                            <p
+                                                class="mt-2 text-[10px] text-[#1E4D2B] font-bold italic bg-[#F2EBD3] rounded-lg px-3 py-1.5">
+                                                "2026년 봄, 나는 기록을 시작했다."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 모임 특징 -->
+                            <div class="bg-[#F2EBD3] rounded-xl p-4">
+                                <p class="text-[#1E4D2B] font-black text-xs mb-3">🌙 이 모임의 특징</p>
+                                <div class="grid grid-cols-2 gap-1.5 text-xs text-slate-700">
+                                    <p class="flex gap-2 items-center"><span
+                                            class="text-[#1E4D2B] font-black">✔</span>비판하지 않습니다</p>
+                                    <p class="flex gap-2 items-center"><span
+                                            class="text-[#1E4D2B] font-black">✔</span>비교하지 않습니다</p>
+                                    <p class="flex gap-2 items-center"><span
+                                            class="text-[#1E4D2B] font-black">✔</span>서두르지 않습니다</p>
+                                    <p class="flex gap-2 items-center"><span
+                                            class="text-[#1E4D2B] font-black">✔</span>눈물이 나도 괜찮습니다</p>
+                                </div>
+                                <p class="mt-3 text-xs text-[#1E4D2B] font-bold text-center">두드림AI는 조용하지만 단단한 기록 공동체입니다.
+                                </p>
+                            </div>
+
+                            <!-- 수료 후 변화 -->
+                            <div class="space-y-2">
+                                <p class="text-[#1E4D2B] font-black text-xs">🌿 수료 후 변화</p>
+                                <div class="flex items-start gap-2.5 bg-[#F2EBD3] rounded-xl p-3"><span
+                                        class="shrink-0">🌱</span>
+                                    <p class="text-xs text-slate-700">나는 내 삶을 <strong>인정</strong>하게 됩니다</p>
+                                </div>
+                                <div class="flex items-start gap-2.5 bg-[#F2EBD3] rounded-xl p-3"><span
+                                        class="shrink-0">✍️</span>
+                                    <p class="text-xs text-slate-700">나는 기록을 <strong>시작한 사람</strong>이 됩니다</p>
+                                </div>
+                                <div class="flex items-start gap-2.5 bg-[#F2EBD3] rounded-xl p-3"><span
+                                        class="shrink-0">📱</span>
+                                    <p class="text-xs text-slate-700">나는 콘텐츠를 <strong>발행한 어른</strong>이 됩니다</p>
+                                </div>
+                                <p class="text-center text-xs text-slate-500 pt-1">그리고 그때부터<br /><strong
+                                        class="text-[#a23d15]">삶은 콘텐츠가 됩니다.</strong></p>
+                            </div>
+
+                            <!-- 봄 모임 CTA -->
+                            <div class="bg-gradient-to-b from-[#1E4D2B] to-[#0f2d18] rounded-xl p-5 text-center">
+                                <p class="text-[#FA925C] text-xs font-bold mb-1">🌸 모집 안내</p>
+                                <p class="text-white/70 text-xs mb-1">삶을 정리하고 싶은 어른 <span
+                                        class="text-[#FA925C] font-bold">5명</span>만 함께합니다.</p>
+                                <p class="text-white/40 text-[10px] mb-4">조용히 시작하고 싶은 분만 신청해 주세요.</p>
+                                <button onclick="openApplyModal()"
+                                    class="w-full bg-[#FA925C] hover:bg-[#e8804a] text-white py-3.5 rounded-xl font-black text-sm shadow-lg transition-colors active:scale-95">
+                                    봄 기록 모임 신청하기 →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===== 신청 폼 모달 ===== -->
+    <div id="applyModal"
+        class="fixed inset-0 z-[200] flex items-end md:items-center justify-center pointer-events-none">
+        <div id="applyOverlay" onclick="closeApplyModal()"
+            class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0"></div>
+
+        <div id="applyPanel"
+            class="relative w-full max-w-lg bg-white rounded-t-3xl md:rounded-3xl shadow-2xl translate-y-full md:translate-y-0 md:scale-95 md:opacity-0">
+
+            <!-- 핸들 (모바일) -->
+            <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mt-3 mb-0 md:hidden"></div>
+
+            <!-- 헤더 -->
+            <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
+                <div>
+                    <p class="text-[10px] text-[#a23d15] font-bold uppercase tracking-widest mb-0.5">🌸 봄 기록 모임 1기</p>
+                    <h3 class="text-lg font-black text-[#1E4D2B]">참가 신청서</h3>
+                </div>
+                <button onclick="closeApplyModal()"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+
+            <!-- 폼 본문 -->
+            <form id="applyForm" class="px-6 py-5 space-y-4" onsubmit="submitApply(event)">
+
+                <!-- 이름 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5" for="apply-name">
+                        이름 <span class="text-[#a23d15]">*</span>
+                    </label>
+                    <input id="apply-name" type="text" required placeholder="홍길동"
+                        class="form-input w-full border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all" />
+                </div>
+
+                <!-- 연락처 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5" for="apply-phone">
+                        연락처 <span class="text-[#a23d15]">*</span>
+                    </label>
+                    <input id="apply-phone" type="tel" required placeholder="01012345678"
+                        oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                        class="form-input w-full border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all" />
+                    <p class="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+                        <span class="text-[#a23d15]">·</span> 숫자만 입력해 주세요 (하이픈 - 없이)
+                    </p>
+                </div>
+
+
+                <!-- 이메일 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5" for="apply-email">
+                        이메일 <span class="text-[#a23d15]">*</span>
+                    </label>
+                    <input id="apply-email" type="email" required placeholder="example@email.com"
+                        class="form-input w-full border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all" />
+                </div>
+
+                <!-- 신청 동기 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5" for="apply-motivation">
+                        신청 동기 <span class="text-slate-400 font-normal">(선택)</span>
+                    </label>
+                    <textarea id="apply-motivation" rows="3" placeholder="이 모임에 참여하고 싶은 이유를 자유롭게 적어주세요."
+                        class="form-input w-full border border-slate-200 rounded-xl px-4 py-3 text-sm transition-all resize-none"></textarea>
+                </div>
+
+                <!-- 개인정보 동의 -->
+                <label class="flex items-start gap-3 cursor-pointer">
+                    <input id="apply-agree" type="checkbox" required
+                        class="mt-0.5 w-4 h-4 rounded accent-[#a23d15] shrink-0" />
+                    <span class="text-xs text-slate-500 leading-relaxed">
+                        개인정보(이름, 연락처, 이메일)를 수집·이용하는 것에 동의합니다.
+                        <span class="text-[#a23d15] font-bold">*</span>
+                    </span>
+                </label>
+
+                <!-- 에러/성공 메시지 영역 -->
+                <div id="apply-message" class="hidden"></div>
+
+                <!-- 제출 버튼 -->
+                <button id="apply-submit" type="submit"
+                    class="w-full bg-[#FA925C] hover:bg-[#e8804a] active:scale-95 text-white py-3.5 rounded-xl font-black text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+                    <span id="submit-text">신청하기 🌸</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        function openCurrModal() {
+            const modal = document.getElementById('currModal');
+            const overlay = document.getElementById('currOverlay');
+            const panel = document.getElementById('currPanel');
+            modal.classList.remove('pointer-events-none');
+            panel.scrollTop = 0;
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                panel.style.transform = 'translateY(0)';
+            });
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCurrModal() {
+            const modal = document.getElementById('currModal');
+            const overlay = document.getElementById('currOverlay');
+            const panel = document.getElementById('currPanel');
+            overlay.style.opacity = '0';
+            panel.style.transform = 'translateY(100%)';
+            document.body.style.overflow = '';
+            setTimeout(() => modal.classList.add('pointer-events-none'), 450);
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCurrModal();
+                closeApplyModal();
+            }
+        });
+
+        /* ===== 신청 폼 모달 제어 ===== */
+        function openApplyModal() {
+            const modal = document.getElementById('applyModal');
+            const overlay = document.getElementById('applyOverlay');
+            const panel = document.getElementById('applyPanel');
+            modal.classList.remove('pointer-events-none');
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                // 모바일: 슬라이드 업 / 데스크탑: 페이드+스케일
+                if (window.innerWidth >= 768) {
+                    panel.style.transform = 'translateY(0) scale(1)';
+                    panel.style.opacity = '1';
+                } else {
+                    panel.style.transform = 'translateY(0)';
+                }
+            });
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeApplyModal() {
+            const modal = document.getElementById('applyModal');
+            const overlay = document.getElementById('applyOverlay');
+            const panel = document.getElementById('applyPanel');
+            overlay.style.opacity = '0';
+            if (window.innerWidth >= 768) {
+                panel.style.transform = 'translateY(0) scale(0.95)';
+                panel.style.opacity = '0';
+            } else {
+                panel.style.transform = 'translateY(100%)';
+            }
+            document.body.style.overflow = '';
+            setTimeout(() => modal.classList.add('pointer-events-none'), 420);
+        }
+
+        /* ===== Baserow API 연동 ===== */
+        const BASEROW_TOKEN = 'KcgCAHCoExTu25HynZgOKHVmWtEOHIHy';
+        const BASEROW_TABLE_ID = '828897';
+        const BASEROW_URL = `https://api.baserow.io/api/database/rows/table/${BASEROW_TABLE_ID}/?user_field_names=true`;
+
+        async function submitApply(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('apply-submit');
+            const txtEl = document.getElementById('submit-text');
+            const msgEl = document.getElementById('apply-message');
+
+            btn.disabled = true;
+            txtEl.innerHTML = '<span class="spinner"></span> 제출 중...';
+            msgEl.className = 'hidden';
+
+            // Baserow 실제 컬럼명과 정확히 맞춘 payload
+            const rawPhone = document.getElementById('apply-phone').value.trim();
+            // 앞자리 0 보존 (실수로 0 안 쓴 경우 자동 보완)
+            const phone = rawPhone.startsWith('0') ? rawPhone : '0' + rawPhone;
+
+            const payload = {
+                '이름': document.getElementById('apply-name').value.trim(),
+                '연락처': phone,
+                '이메일': document.getElementById('apply-email').value.trim(),
+                '신청동기': document.getElementById('apply-motivation').value.trim(),
+                '신청일시': new Date().toISOString().split('T')[0],
+            };
+
+            try {
+                const res = await fetch(BASEROW_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Token ${BASEROW_TOKEN}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    msgEl.className = 'bg-[#F2EBD3] border border-[#1E4D2B]/20 rounded-xl p-4 text-center';
+                    msgEl.innerHTML = `
+                        <p class="text-2xl mb-2">🌸</p>
+                        <p class="text-[#1E4D2B] font-black text-sm mb-1">신청이 완료되었습니다!</p>
+                        <p class="text-xs text-slate-500">확인 후 연락드리겠습니다. 감사합니다 😊</p>
+                    `;
+                    document.getElementById('applyForm').reset();
+                    btn.disabled = false;
+                    txtEl.innerHTML = '신청하기 🌸';
+                    setTimeout(() => closeApplyModal(), 3000);
+                } else {
+                    throw new Error(JSON.stringify(data));
+                }
+
+            } catch (error) {
+                console.error('Baserow 오류:', error.message);
+                msgEl.className = 'bg-red-50 border border-red-200 rounded-xl p-4';
+                msgEl.innerHTML = `
+                    <p class="text-red-600 font-bold text-sm mb-2">⚠️ 제출에 실패했습니다.</p>
+                    <p class="text-[10px] text-red-400 break-all leading-relaxed">${error.message}</p>
+                `;
+                btn.disabled = false;
+                txtEl.innerHTML = '신청하기 🌸';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
