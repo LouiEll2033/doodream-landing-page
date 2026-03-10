@@ -955,6 +955,28 @@
         const BASEROW_TABLE_ID = '828897';
         const BASEROW_URL = `https://api.baserow.io/api/database/rows/table/${BASEROW_TABLE_ID}/?user_field_names=true`;
 
+        // ✅ Make.com 웹훅 URL - STEP 2-2에서 복사한 URL로 교체하세요
+        const MAKE_WEBHOOK_URL = 'https://hook.us2.make.com/3lu4mtqjb8lcgj1cgcaee7u1dgnneff2';
+
+        // Make.com 웹훅 호출 (SMS 발송 트리거)
+        async function triggerSmsWebhook(payload) {
+            if (!MAKE_WEBHOOK_URL || MAKE_WEBHOOK_URL === 'YOUR_MAKE_WEBHOOK_URL_HERE') {
+                console.warn('⚠️ Make.com 웹훅 URL이 설정되지 않았습니다.');
+                return;
+            }
+            try {
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                console.log('✅ SMS 웹훅 전송 완료');
+            } catch (err) {
+                // SMS 실패가 신청 자체를 막지 않도록 에러만 로깅
+                console.error('SMS 웹훅 오류 (신청은 정상 완료됨):', err.message);
+            }
+        }
+
         async function submitApply(e) {
             e.preventDefault();
 
@@ -992,6 +1014,15 @@
                 const data = await res.json();
 
                 if (res.ok) {
+                    // ✅ DB 저장 성공 → SMS 웹훅 비동기 호출 (영어 키로 전달)
+                    triggerSmsWebhook({
+                        name: payload['이름'],
+                        phone: payload['연락처'],
+                        email: payload['이메일'],
+                        motivation: payload['신청동기'],
+                        date: payload['신청일시'],
+                    });
+
                     msgEl.className = 'bg-[#F2EBD3] border border-[#1E4D2B]/20 rounded-xl p-4 text-center';
                     msgEl.innerHTML = `
                         <p class="text-2xl mb-2">🌸</p>
